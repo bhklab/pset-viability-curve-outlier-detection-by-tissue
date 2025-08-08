@@ -2,12 +2,13 @@
 # that have large variances in viability when plotted
 
 #specify the dataset below
-screen <- PSet_CTRPv2
+screen <- PSet_gCSI2019
 
 sensitivity_data <- sensitivityRaw(screen)
 my_drugs <- screen@treatment$treatmentid
 tissue_names <- screen@sample$tissueid
 all_tissues <- c(unique(tissue_names))
+outliers_all_tissues <- data.frame()
 
 for (tissue in all_tissues) {
   message(paste0("Tissue: ", tissue))
@@ -24,6 +25,14 @@ for (tissue in all_tissues) {
       #the pattern is determined by the way replicates are named (cellline_drug is a common inclusion in the name of the exp id)
       #the pattern needs to be determined before using the program
       pattern <- paste0("^", my_cellline, "_", my_drug, "_")
+      
+      #interpreting regex characters as literal for ones found in replicate names
+      pattern <- gsub("\\[", "\\\\[", pattern)
+      pattern <- gsub("\\]", "\\\\]", pattern)
+      pattern <- gsub("\\.", "\\\\.", pattern)
+      pattern <- gsub("\\(", "\\\\(", pattern)
+      pattern <- gsub("\\)", "\\\\)", pattern)
+      
       experiment_ids <- dimnames(sensitivity_data)[[1]]
       
       matches <- grepl(pattern, experiment_ids)
@@ -89,6 +98,7 @@ for (tissue in all_tissues) {
     outliers_df <- average_variance_df[average_variance_df$normalized_variances > 3, ]
     
     print(outliers_df)
+    outliers_all_tissues <- rbind(outliers_all_tissues, outliers_df)
     print(paste0("# of assays with valid replicates in ", tissue, ": ", length(replicated_drugs)))
     print(paste0("Number of outliers: ", nrow(outliers_df)))
     
@@ -110,3 +120,5 @@ for (tissue in all_tissues) {
     }
   }
 }
+
+#View(outliers_all_tissues) to see outliers for the entire dataset
