@@ -51,8 +51,10 @@ for (tissue in all_tissues) {
           next
         }
         
-        #put all the experiments together for each drug and aggregate them
+        #puts all the experiments together for each drug and aggregate them
         matches_dose_viability <- na.omit(do.call(rbind, replicates_dose_viability_list))
+
+        #currently doses are rounded to 4 decimals, which can be changed here
         matches_dose_viability$Dose <- round(matches_dose_viability$Dose, 4)
 
         if (nrow(matches_dose_viability) > 0 && length(unique(matches_dose_viability$Viability[!is.na(matches_dose_viability$Viability)])) >= 2) {
@@ -95,6 +97,8 @@ for (tissue in all_tissues) {
     }
     
     average_variance_df$normalized_variances <- normalized_variances
+
+    #change the criteria for an outlier here (right now, an outlier is at least 3 SD)
     outliers_df <- average_variance_df[average_variance_df$normalized_variances > 3, ]
     
     print(outliers_df)
@@ -122,4 +126,5 @@ for (tissue in all_tissues) {
 }
 
 #View(outliers_all_tissues) after the program has completed running to see outliers for the entire dataset
+
 
