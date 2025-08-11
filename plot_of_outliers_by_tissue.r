@@ -24,6 +24,7 @@ for (tissue in all_tissues) {
     for (my_drug in my_drugs) {
       #the pattern is determined by the way replicates are named in the PSet (most start with cellline_drug_)
       #the pattern needs to be determined before using the program (some replicates in PSets start with drug_cellline_ or something else)
+      #see README for info on the naming patterns of tested datasets
       pattern <- paste0("^", my_cellline, "_", my_drug, "_")
       
       #interpreting regex characters as literal for ones found in replicate names
@@ -126,5 +127,6 @@ for (tissue in all_tissues) {
 }
 
 #View(outliers_all_tissues) after the program has completed running to see outliers for the entire dataset
+
 
 
